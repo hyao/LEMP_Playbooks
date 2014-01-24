@@ -1,0 +1,12 @@
+---
+
+- name: deploy LEMP stack
+  hosts: lemp_hosts
+
+  sudo: yes
+
+  roles:
+    - common
+    - dbservers
+    - webservers
+    - php5

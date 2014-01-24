@@ -5,4 +5,7 @@ A set of playbooks to deploy LEMP stack on Ubuntu LTS, including MySQL, Nginx, p
 
 You may need to make some modifications as per your requirements.
 
+To deploy a standard LEMP stack:
+
+```ansible-playbooks deploy.yml```
 
