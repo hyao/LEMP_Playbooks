@@ -1,18 +1,31 @@
 ---
 - name: Ensure the user exists
-  user: name={{ site.user }} state=present
+  user: name={{ item.user }} state=present shell=/bin/bash
+  with_items: sites
   
-- name: Ensure {{ site.user }} has {{ site.dir }} and public, logs subdirs in his home directory
-  file: path=/home/{{ site.user }}/{{ site.dir }}{{ item }} state=directory recurse=yes owner={{ site.user }} group={{ site.user }}
-  with_items:
-    - /
-    - /public
-    - /logs
+- name: Ensure {{ item.user }} has {{ item.dir }} in his home directory
+  file: path=/home/{{ item.user }}/{{ item.dir }}/ state=directory recurse=yes owner={{ item.user }} group={{ item.user }}
+  with_items: sites
 
-- name: Ensure there is a site entry for {{ site.server_name }}
-  template: src=site.j2 dest=/etc/nginx/sites-available/{{ site.server_name }}
+- name: Ensure {{ item.user }} has {{ item.dir }} public subdirs in his home directory
+  file: path=/home/{{ item.user }}/{{ item.dir }}/public state=directory recurse=yes owner={{ item.user }} group={{ item.user }}
+  with_items: sites
+
+- name: Ensure {{ item.user }} has {{ item.dir }} logs subdirs in his home directory
+  file: path=/home/{{ item.user }}/{{ item.dir }}/logs state=directory recurse=yes owner={{ item.user }} group={{ item.user }}
+  with_items: sites
+
+- name: Ensure there is a nginx site entry for {{ item.server_name }} 
+  template: src=site.j2 dest=/etc/nginx/sites-available/{{ item.server_name }}
+  with_items: sites
   
-- name: Ensure the site {{ site.server_name }} is enabled
-  file: src=/etc/nginx/sites-available/{{ site.server_name }} dest=/etc/nginx/sites-enabled/{{ site.server_name }} state=link
+- name: Ensure the site {{ item.server_name }} is enabled
+  file: src=/etc/nginx/sites-available/{{ item.server_name }} dest=/etc/nginx/sites-enabled/{{ item.server_name }} state=link
+  with_items: sites
+
+- name: copy index.php to server
+  copy: src=index.php dest=/home/{{ item.user }}/{{ item.dir }}/public/index.php
+        owner={{ item.user }} group={{ item.user }} mode=0644
+  with_items: sites
   notify: 
     - restart nginx

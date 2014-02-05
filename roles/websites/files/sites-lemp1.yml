@@ -1,9 +1,9 @@
 ---
 sites:
-  - user: site_user1 
-    dir: site1 
+  - user: user1 
+    dir: lemp1.starvm.com 
     php_pool: 9001 
-    server_name: uk1.example.com
+    server_name: lemp1.starvm.com 
 
   - user: user2 
     dir: site2 

@@ -1,8 +1,7 @@
 ---
 
 - name: deploy LEMP stack
-  hosts: lemp_hosts
-
+  hosts: lemp1
   sudo: yes
 
   roles:
@@ -10,3 +9,15 @@
     - dbservers
     - webservers
     - php5
+
+
+- name: deploy websites to one host
+  hosts: lemp1
+  sudo: yes
+  vars_files:
+    #use different sites-hostname.yml to deploy websites to different hosts
+    - roles/websites/files/sites-{{ inventory_hostname }}.yml
+
+  roles:
+    - websites
+
